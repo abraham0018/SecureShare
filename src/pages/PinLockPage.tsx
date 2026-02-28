@@ -5,26 +5,57 @@ interface PinLockPageProps {
   onUnlock: () => void;
 }
 
-const DEFAULT_PIN = '1234';
+const PIN_KEY = 'secureshare-pin';
 
 const PinLockPage = ({ onUnlock }: PinLockPageProps) => {
   const [pin, setPin] = useState('');
+  const [confirmPin, setConfirmPin] = useState('');
   const [error, setError] = useState(false);
-  const storedPin = localStorage.getItem('secureshare-pin') || DEFAULT_PIN;
+  const [isSetup, setIsSetup] = useState(false);
+  const [step, setStep] = useState<'enter' | 'confirm'>('enter');
+
+  const storedPin = localStorage.getItem(PIN_KEY);
+
+  useEffect(() => {
+    if (!storedPin) {
+      setIsSetup(true);
+    }
+  }, [storedPin]);
 
   useEffect(() => {
     if (pin.length === 4) {
-      if (pin === storedPin) {
-        onUnlock();
-      } else {
-        setError(true);
-        setTimeout(() => {
+      if (isSetup) {
+        if (step === 'enter') {
+          setConfirmPin(pin);
           setPin('');
-          setError(false);
-        }, 600);
+          setStep('confirm');
+        } else {
+          if (pin === confirmPin) {
+            localStorage.setItem(PIN_KEY, pin);
+            onUnlock();
+          } else {
+            setError(true);
+            setTimeout(() => {
+              setPin('');
+              setConfirmPin('');
+              setStep('enter');
+              setError(false);
+            }, 600);
+          }
+        }
+      } else {
+        if (pin === storedPin) {
+          onUnlock();
+        } else {
+          setError(true);
+          setTimeout(() => {
+            setPin('');
+            setError(false);
+          }, 600);
+        }
       }
     }
-  }, [pin, storedPin, onUnlock]);
+  }, [pin]);
 
   const handleDigit = (d: string) => {
     if (pin.length < 4) setPin(prev => prev + d);
@@ -37,13 +68,19 @@ const PinLockPage = ({ onUnlock }: PinLockPageProps) => {
 
   const digits = ['1','2','3','4','5','6','7','8','9','','0','del'];
 
+  const getMessage = () => {
+    if (isSetup && step === 'enter') return 'Create a 4-digit PIN';
+    if (isSetup && step === 'confirm') return 'Confirm your PIN';
+    return 'Enter your PIN to unlock';
+  };
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center header-gradient px-6">
+    <div className="min-h-screen flex flex-col items-center justify-center px-6" style={{ background: 'hsl(var(--navy))' }}>
       <div className="icon-circle-xl mb-6">
         <Shield size={36} className="text-teal" />
       </div>
       <h1 className="text-2xl font-bold text-primary-foreground mb-2">SecureShare</h1>
-      <p className="text-sm text-primary-foreground/60 mb-8">Enter your PIN to unlock</p>
+      <p className="text-sm text-primary-foreground/60 mb-8">{getMessage()}</p>
 
       {/* PIN dots */}
       <div className="flex gap-4 mb-10">
@@ -62,7 +99,9 @@ const PinLockPage = ({ onUnlock }: PinLockPageProps) => {
       </div>
 
       {error && (
-        <p className="text-destructive text-sm mb-4 font-medium">Incorrect PIN</p>
+        <p className="text-destructive text-sm mb-4 font-medium">
+          {isSetup ? "PINs don't match. Try again." : 'Incorrect PIN'}
+        </p>
       )}
 
       {/* Keypad */}
@@ -91,8 +130,6 @@ const PinLockPage = ({ onUnlock }: PinLockPageProps) => {
           );
         })}
       </div>
-
-      <p className="text-xs text-primary-foreground/40 mt-8">Default PIN: 1234</p>
     </div>
   );
 };
