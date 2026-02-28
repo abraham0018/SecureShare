@@ -31,8 +31,8 @@ const VaultPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col pb-20">
-      {/* Header */}
-      <div className="header-gradient px-5 pt-6 pb-5">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-40 header-gradient px-5 pt-6 pb-6 rounded-b-[40px] overflow-hidden shadow-lg shadow-navy/30">
         <div className="flex items-center gap-3 mb-5">
           <div className="icon-circle">
             <Shield size={22} className="text-teal" />
@@ -56,7 +56,7 @@ const VaultPage = () => {
       </div>
 
       {/* Content */}
-      <div className="flex-1 px-5 -mt-0 pt-5">
+      <div className="flex-1 px-5 pt-5">
         <h2 className="text-lg font-semibold mb-3">Quick Actions</h2>
         <div className="grid grid-cols-2 gap-3 mb-6">
           {actions.map(action => (
