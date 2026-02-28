@@ -69,7 +69,7 @@
 
 @layer components {
   .header-gradient {
-    background: linear-gradient(180deg, hsl(var(--navy)) 0%, hsl(var(--navy-mid)) 100%);
+    background: hsl(var(--navy));
   }
 
   .stats-bar {

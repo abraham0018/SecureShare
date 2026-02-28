@@ -1,4 +1,4 @@
-import { Lock, Wifi, Trash2, Info, HelpCircle, ChevronRight, Shield } from 'lucide-react';
+import { Lock, Wifi, Trash2, Info, HelpCircle, ChevronRight, Shield, KeyRound } from 'lucide-react';
 import { useVault } from '@/context/VaultContext';
 import BottomNav from '@/components/BottomNav';
 import { toast } from 'sonner';
@@ -14,10 +14,28 @@ const SettingsPage = () => {
     }
   };
 
+  const handleChangePin = () => {
+    const current = prompt('Enter current PIN:');
+    const stored = localStorage.getItem('secureshare-pin');
+    if (current !== stored) return toast.error('Incorrect current PIN');
+    const newPin = prompt('Enter new 4-digit PIN:');
+    if (!newPin || newPin.length !== 4 || !/^\d{4}$/.test(newPin)) return toast.error('PIN must be 4 digits');
+    const confirm2 = prompt('Confirm new PIN:');
+    if (newPin !== confirm2) return toast.error("PINs don't match");
+    localStorage.setItem('secureshare-pin', newPin);
+    toast.success('PIN changed successfully');
+  };
+
   const sections = [
     {
       label: 'SECURITY',
       items: [
+        {
+          icon: KeyRound,
+          title: 'Change PIN',
+          desc: 'Update your login PIN',
+          onClick: handleChangePin,
+        },
         {
           icon: Lock,
           title: 'Encryption Info',
