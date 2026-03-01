@@ -30,42 +30,42 @@ const VaultPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col pb-20">
-      {/* Sticky Header */}
-      <div className="sticky top-0 z-40 header-gradient px-5 pt-6 pb-6 rounded-b-[40px] overflow-hidden shadow-lg shadow-navy/30">
+    <div className="min-h-screen flex flex-col bg-navy pb-20">
+      {/* Header - dark navy background */}
+      <div className="bg-navy px-5 pt-6 pb-16">
         <div className="flex items-center gap-3 mb-5">
-          <div className="icon-circle">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center border border-primary-foreground/20">
             <Shield size={22} className="text-teal" />
           </div>
           <div>
             <h1 className="text-xl font-bold text-primary-foreground">SecureShare</h1>
-            <p className="text-xs text-primary-foreground/60">Your encrypted vault</p>
+            <p className="text-xs text-primary-foreground/50">Your encrypted vault</p>
           </div>
         </div>
-        <div className="stats-bar rounded-xl flex">
+        <div className="bg-navy-mid/40 rounded-xl flex">
           <div className="flex-1 py-3 text-center">
             <p className="text-2xl font-bold text-primary-foreground">{totalFiles}</p>
-            <p className="text-xs text-primary-foreground/60">Total Files</p>
+            <p className="text-[11px] text-primary-foreground/50">Total Files</p>
           </div>
-          <div className="w-px bg-primary-foreground/20" />
+          <div className="w-px bg-primary-foreground/15 my-2" />
           <div className="flex-1 py-3 text-center">
             <p className="text-2xl font-bold text-primary-foreground">{encryptedFiles}</p>
-            <p className="text-xs text-primary-foreground/60">Encrypted</p>
+            <p className="text-[11px] text-primary-foreground/50">Encrypted</p>
           </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 px-5 pt-5">
-        <h2 className="text-lg font-semibold mb-3">Quick Actions</h2>
+      {/* Content - white card overlapping header */}
+      <div className="flex-1 bg-card rounded-t-[28px] -mt-8 px-5 pt-6 relative z-10">
+        <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
         <div className="grid grid-cols-2 gap-3 mb-6">
           {actions.map(action => (
             <button
               key={action.path}
               onClick={() => navigate(action.path)}
-              className="action-card text-left"
+              className="bg-card border border-border rounded-2xl p-4 flex flex-col gap-2.5 text-left transition-all duration-200 active:scale-95"
             >
-              <div className="icon-circle">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-navy">
                 <action.icon size={20} className="text-teal" />
               </div>
               <p className="font-semibold text-sm">{action.label}</p>
@@ -77,7 +77,7 @@ const VaultPage = () => {
         <h2 className="text-lg font-semibold mb-3">Your Vault</h2>
         {files.length === 0 ? (
           <div className="flex flex-col items-center py-8 text-muted-foreground">
-            <div className="icon-circle-lg mb-3">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-navy/10 mb-3">
               <Lock size={28} className="text-teal" />
             </div>
             <p className="text-sm">No files yet</p>
@@ -86,8 +86,8 @@ const VaultPage = () => {
           <div className="space-y-3">
             {files.map(file => (
               <div key={file.id} className="flex items-center gap-3 bg-card border border-border rounded-xl p-3">
-                <div className="icon-circle shrink-0">
-                  <Lock size={18} className="text-teal" />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-navy shrink-0">
+                  <Lock size={16} className="text-teal" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{file.name}</p>
