@@ -49,7 +49,10 @@ export default {
         },
         navy: "hsl(var(--navy))",
         "navy-mid": "hsl(var(--navy-mid))",
-        teal: "hsl(var(--teal))",
+        teal: {
+          DEFAULT: "hsl(var(--teal))",
+          solid: "hsl(var(--teal-solid))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

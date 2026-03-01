@@ -13,10 +13,10 @@ const VaultPage = () => {
   const encryptedFiles = files.filter(f => f.encrypted).length;
 
   const actions = [
-    { icon: Lock, label: 'Encrypt', desc: 'Secure a file', path: '/encrypt' },
-    { icon: Unlock, label: 'Decrypt', desc: 'Unlock a file', path: '/decrypt' },
-    { icon: Wifi, label: 'Share', desc: 'Send via WiFi', path: '/share' },
-    { icon: Download, label: 'Receive', desc: 'Get files', path: '/receive' },
+    { icon: Lock, label: 'Encrypt', desc: 'Secure a file', path: '/encrypt', iconBg: 'bg-navy' },
+    { icon: Unlock, label: 'Decrypt', desc: 'Unlock a file', path: '/decrypt', iconBg: '' },
+    { icon: Wifi, label: 'Share', desc: 'Send via WiFi', path: '/share', iconBg: '' },
+    { icon: Download, label: 'Receive', desc: 'Get files', path: '/receive', iconBg: '' },
   ];
 
   const handleDownload = (file: typeof files[0]) => {
@@ -56,7 +56,7 @@ const VaultPage = () => {
       </div>
 
       {/* Content - white card overlapping header with curve */}
-      <div className="flex-1 bg-card rounded-t-[28px] -mt-8 px-5 pt-6 relative z-50">
+      <div className="flex-1 bg-card rounded-t-[28px] -mt-8 px-5 pt-6 relative z-10">
         <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
         <div className="grid grid-cols-2 gap-3 mb-6">
           {actions.map(action => (
@@ -65,8 +65,8 @@ const VaultPage = () => {
               onClick={() => navigate(action.path)}
               className="bg-card border border-border rounded-2xl p-4 flex flex-col gap-2.5 text-left transition-all duration-200 active:scale-95"
             >
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-navy">
-                <action.icon size={20} className="text-teal" />
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${action.iconBg || 'bg-teal-solid'}`}>
+                <action.icon size={20} className="text-primary-foreground" />
               </div>
               <p className="font-semibold text-sm">{action.label}</p>
               <p className="text-xs text-muted-foreground">{action.desc}</p>
