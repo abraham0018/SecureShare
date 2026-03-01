@@ -31,8 +31,8 @@ const VaultPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-navy pb-20">
-      {/* Header - dark navy background */}
-      <div className="bg-navy px-5 pt-6 pb-16">
+      {/* Header - dark navy background, sticky */}
+      <div className="sticky top-0 z-40 bg-navy px-5 pt-6 pb-16">
         <div className="flex items-center gap-3 mb-5">
           <div className="w-11 h-11 rounded-xl flex items-center justify-center border border-primary-foreground/20">
             <Shield size={22} className="text-teal" />
