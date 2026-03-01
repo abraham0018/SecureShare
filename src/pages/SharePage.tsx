@@ -1,20 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Wifi, FileText, Lock, Copy, Smartphone } from 'lucide-react';
+import { Wifi, FileText, Lock, Copy, WifiOff } from 'lucide-react';
 import { useVault } from '@/context/VaultContext';
 import { generateShareCode, formatFileSize, formatDate } from '@/lib/encryption';
+import { useWifiPeerDiscovery } from '@/hooks/useWifiPeerDiscovery';
 import PageHeader from '@/components/PageHeader';
+import DeviceList from '@/components/share/DeviceList';
+import TransferProgressBar from '@/components/share/TransferProgress';
 import { toast } from 'sonner';
-
-interface DiscoveredDevice {
-  id: string;
-  name: string;
-  ip: string;
-}
+import type { DiscoveredDevice } from '@/plugins/WifiPeerDiscovery';
 
 const FAKE_DEVICES: DiscoveredDevice[] = [
-  { id: '1', name: 'iPhone 15 Pro', ip: '192.168.1.42' },
-  { id: '2', name: 'Galaxy S24', ip: '192.168.1.58' },
-  { id: '3', name: 'MacBook Air', ip: '192.168.1.23' },
+  { id: '1', name: 'iPhone 15 Pro', ip: '192.168.1.42', port: 8080 },
+  { id: '2', name: 'Galaxy S24', ip: '192.168.1.58', port: 8080 },
+  { id: '3', name: 'MacBook Air', ip: '192.168.1.23', port: 8080 },
 ];
 
 const SharePage = () => {
@@ -23,8 +21,16 @@ const SharePage = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [sharing, setSharing] = useState(false);
   const [shareCode, setShareCode] = useState('');
-  const [scanning, setScanning] = useState(false);
-  const [devices, setDevices] = useState<DiscoveredDevice[]>([]);
+
+  // Native plugin
+  const wifi = useWifiPeerDiscovery();
+
+  // Web simulation state
+  const [webScanning, setWebScanning] = useState(false);
+  const [webDevices, setWebDevices] = useState<DiscoveredDevice[]>([]);
+
+  const devices = wifi.isNative ? wifi.devices : webDevices;
+  const scanning = wifi.isNative ? wifi.status === 'scanning' : webScanning;
 
   const toggleFile = (id: string) => {
     setSelectedIds(prev => {
@@ -35,37 +41,58 @@ const SharePage = () => {
     });
   };
 
-  const startSharing = () => {
+  const startSharing = async () => {
     if (selectedIds.size === 0) return toast.error('Select files to share');
     setShareCode(generateShareCode());
     setSharing(true);
-    setScanning(true);
-    setDevices([]);
+
+    if (wifi.isNative) {
+      await wifi.startServer();
+      await wifi.startDiscovery();
+    } else {
+      // Web simulation
+      setWebScanning(true);
+      setWebDevices([]);
+    }
   };
 
+  // Web simulation: discover fake devices
   useEffect(() => {
-    if (!scanning) return;
-    // Simulate discovering devices one by one
+    if (!webScanning || wifi.isNative) return;
     const timers: ReturnType<typeof setTimeout>[] = [];
     FAKE_DEVICES.forEach((device, i) => {
       timers.push(setTimeout(() => {
-        setDevices(prev => [...prev, device]);
-        if (i === FAKE_DEVICES.length - 1) setScanning(false);
+        setWebDevices(prev => [...prev, device]);
+        if (i === FAKE_DEVICES.length - 1) setWebScanning(false);
       }, 1500 + i * 1200));
     });
     return () => timers.forEach(clearTimeout);
-  }, [scanning]);
+  }, [webScanning, wifi.isNative]);
 
-  const stopSharing = () => {
+  const stopSharing = async () => {
     setSharing(false);
     setShareCode('');
     setSelectedIds(new Set());
-    setDevices([]);
-    setScanning(false);
+
+    if (wifi.isNative) {
+      await wifi.stopDiscovery();
+    } else {
+      setWebDevices([]);
+      setWebScanning(false);
+    }
   };
 
-  const sendToDevice = (device: DiscoveredDevice) => {
-    toast.success(`Sending ${selectedIds.size} file(s) to ${device.name}...`);
+  const sendToDevice = async (device: DiscoveredDevice) => {
+    if (wifi.isNative) {
+      // Send actual file via native plugin
+      const selectedFiles = files.filter(f => selectedIds.has(f.id));
+      for (const file of selectedFiles) {
+        // In native, filePath would come from the file system
+        await wifi.sendFile(device.ip, device.port, file.name);
+      }
+    } else {
+      toast.success(`Sending ${selectedIds.size} file(s) to ${device.name}...`);
+    }
   };
 
   const copyCode = () => {
@@ -88,9 +115,15 @@ const SharePage = () => {
           </div>
 
           <h2 className="text-xl font-bold mb-1">Sharing Active</h2>
-          <p className="text-sm text-muted-foreground mb-6">
+          <p className="text-sm text-muted-foreground mb-1">
             {selectedIds.size} file{selectedIds.size > 1 ? 's' : ''} ready to share
           </p>
+          {!wifi.isNative && (
+            <p className="text-xs text-amber-500 mb-4 flex items-center gap-1">
+              <WifiOff size={12} />
+              <span>Web preview — install on device for real transfers</span>
+            </p>
+          )}
 
           <p className="text-xs text-muted-foreground mb-2">Share Code</p>
           <div className="share-code flex items-center gap-3 mb-2">
@@ -99,36 +132,20 @@ const SharePage = () => {
           </div>
           <p className="text-xs text-muted-foreground mb-6">Share this code with the recipient</p>
 
-          {/* Device discovery */}
-          <div className="w-full mb-6">
-            <p className="text-sm font-semibold mb-3">
-              {scanning ? 'Scanning for devices...' : `${devices.length} device(s) found`}
-            </p>
-            <div className="space-y-2">
-              {devices.map(device => (
-                <button
-                  key={device.id}
-                  onClick={() => sendToDevice(device)}
-                  className="w-full flex items-center gap-3 bg-card border border-border rounded-xl p-3 text-left transition-all hover:border-teal"
-                >
-                  <div className="icon-circle shrink-0">
-                    <Smartphone size={18} className="text-teal" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium">{device.name}</p>
-                    <p className="text-xs text-muted-foreground">{device.ip}</p>
-                  </div>
-                  <span className="text-xs text-teal font-medium">Send</span>
-                </button>
-              ))}
-              {scanning && (
-                <div className="flex items-center gap-2 py-2 px-3 text-muted-foreground">
-                  <div className="w-3 h-3 rounded-full bg-teal animate-pulse" />
-                  <span className="text-xs">Scanning network...</span>
-                </div>
-              )}
-            </div>
-          </div>
+          {/* Transfer progress (native only) */}
+          <TransferProgressBar
+            progress={wifi.transferProgress}
+            fileName={wifi.transferFileName}
+            result={wifi.lastResult}
+            isTransferring={wifi.status === 'transferring'}
+          />
+
+          {/* Device list */}
+          <DeviceList
+            devices={devices}
+            status={scanning ? 'scanning' : 'idle'}
+            onSendToDevice={sendToDevice}
+          />
 
           <button
             onClick={stopSharing}
