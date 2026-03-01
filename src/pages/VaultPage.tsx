@@ -30,9 +30,9 @@ const VaultPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-navy pb-20">
+    <div className="min-h-screen bg-navy pb-20">
       {/* Header - dark navy background, sticky */}
-      <div className="sticky top-0 z-40 bg-navy px-5 pt-6 pb-16">
+      <div className="sticky top-0 z-40 bg-navy px-5 pt-6 pb-5">
         <div className="flex items-center gap-3 mb-5">
           <div className="w-11 h-11 rounded-xl flex items-center justify-center border border-primary-foreground/20">
             <Shield size={22} className="text-teal" />
@@ -55,8 +55,8 @@ const VaultPage = () => {
         </div>
       </div>
 
-      {/* Content - white card overlapping header with curve */}
-      <div className="flex-1 bg-card rounded-t-[28px] -mt-8 px-5 pt-6 relative z-10">
+      {/* Content - white card with curved top, scrolls under header */}
+      <div className="bg-card rounded-t-[28px] px-5 pt-6 min-h-screen">
         <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
         <div className="grid grid-cols-2 gap-3 mb-6">
           {actions.map(action => (
