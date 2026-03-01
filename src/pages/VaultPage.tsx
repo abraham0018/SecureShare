@@ -55,8 +55,8 @@ const VaultPage = () => {
         </div>
       </div>
 
-      {/* Content - white card overlapping header */}
-      <div className="flex-1 bg-card rounded-t-[28px] -mt-8 px-5 pt-6 relative z-10">
+      {/* Content - white card overlapping header with curve */}
+      <div className="flex-1 bg-card rounded-t-[28px] -mt-8 px-5 pt-6 relative z-50">
         <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
         <div className="grid grid-cols-2 gap-3 mb-6">
           {actions.map(action => (
