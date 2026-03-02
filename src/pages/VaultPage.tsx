@@ -32,7 +32,7 @@ const VaultPage = () => {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header - fixed to top with downward curve */}
-      <div className="fixed top-0 left-0 right-0 z-40 bg-navy px-5 pt-6 pb-10 rounded-b-[28px]">
+      <div className="fixed top-0 left-0 right-0 z-40 bg-navy px-5 pt-6 pb-10" style={{ borderBottomLeftRadius: '28px', borderBottomRightRadius: '28px', borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
         <div className="flex items-center gap-3 mb-5">
           <div className="w-11 h-11 rounded-xl flex items-center justify-center border border-primary-foreground/20">
             <Shield size={22} className="text-teal" />

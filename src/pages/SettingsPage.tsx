@@ -41,9 +41,7 @@ const SettingsPage = () => {
           title: 'Lock App',
           desc: 'Lock the app immediately',
           onClick: () => {
-            localStorage.removeItem('secureshare-unlocked');
-            window.location.href = '/pin';
-            toast.success('App locked');
+            window.location.replace('/');
           },
         },
       ],
