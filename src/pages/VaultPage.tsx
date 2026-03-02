@@ -56,7 +56,7 @@ const VaultPage = () => {
           </div>
         </div>
         <svg viewBox="0 0 1440 40" className="w-full block -mt-px" preserveAspectRatio="none">
-          <path d="M0,0 L0,0 Q720,40 1440,0 L1440,0 Z" fill="hsl(200,72%,9%)" />
+          <path d="M0,0 L0,40 Q720,0 1440,40 L1440,0 Z" fill="hsl(200,72%,9%)" />
         </svg>
       </div>
 
