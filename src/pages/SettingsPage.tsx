@@ -90,14 +90,19 @@ const SettingsPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col pb-20">
-      <div className="header-gradient px-5 py-5 flex items-center gap-3">
-        <div className="icon-circle">
-          <Shield size={22} className="text-teal" />
+      <div className="fixed top-0 left-0 right-0 z-40">
+        <div className="bg-navy px-5 py-5 flex items-center gap-3">
+          <div className="icon-circle">
+            <Shield size={22} className="text-teal" />
+          </div>
+          <h1 className="text-xl font-bold text-primary-foreground">Settings</h1>
         </div>
-        <h1 className="text-xl font-bold text-primary-foreground">Settings</h1>
+        <svg viewBox="0 0 1440 40" className="w-full block -mt-px" preserveAspectRatio="none">
+          <path d="M0,0 L0,0 Q720,40 1440,0 L1440,0 Z" fill="hsl(200,72%,9%)" />
+        </svg>
       </div>
 
-      <div className="flex-1 px-5 pt-5 space-y-5">
+      <div className="flex-1 px-5 space-y-5" style={{ marginTop: '110px' }}>
         {sections.map(section => (
           <div key={section.label}>
             <p className="section-label mb-2">{section.label}</p>

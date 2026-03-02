@@ -32,27 +32,32 @@ const VaultPage = () => {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header - fixed to top with downward curve */}
-      <div className="fixed top-0 left-0 right-0 z-40 bg-navy px-5 pt-6 pb-10" style={{ borderBottomLeftRadius: '28px', borderBottomRightRadius: '28px', borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
-        <div className="flex items-center gap-3 mb-5">
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center border border-primary-foreground/20">
-            <Shield size={22} className="text-teal" />
+      <div className="fixed top-0 left-0 right-0 z-40">
+        <div className="bg-navy px-5 pt-6 pb-4">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center border border-primary-foreground/20">
+              <Shield size={22} className="text-teal" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-primary-foreground">SecureShare</h1>
+              <p className="text-xs text-primary-foreground/50">Your encrypted vault</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold text-primary-foreground">SecureShare</h1>
-            <p className="text-xs text-primary-foreground/50">Your encrypted vault</p>
+          <div className="bg-navy-mid/40 rounded-xl flex">
+            <div className="flex-1 py-3 text-center">
+              <p className="text-2xl font-bold text-primary-foreground">{totalFiles}</p>
+              <p className="text-[11px] text-primary-foreground/50">Total Files</p>
+            </div>
+            <div className="w-px bg-primary-foreground/15 my-2" />
+            <div className="flex-1 py-3 text-center">
+              <p className="text-2xl font-bold text-primary-foreground">{encryptedFiles}</p>
+              <p className="text-[11px] text-primary-foreground/50">Encrypted</p>
+            </div>
           </div>
         </div>
-        <div className="bg-navy-mid/40 rounded-xl flex">
-          <div className="flex-1 py-3 text-center">
-            <p className="text-2xl font-bold text-primary-foreground">{totalFiles}</p>
-            <p className="text-[11px] text-primary-foreground/50">Total Files</p>
-          </div>
-          <div className="w-px bg-primary-foreground/15 my-2" />
-          <div className="flex-1 py-3 text-center">
-            <p className="text-2xl font-bold text-primary-foreground">{encryptedFiles}</p>
-            <p className="text-[11px] text-primary-foreground/50">Encrypted</p>
-          </div>
-        </div>
+        <svg viewBox="0 0 1440 40" className="w-full block -mt-px" preserveAspectRatio="none">
+          <path d="M0,0 L0,0 Q720,40 1440,0 L1440,0 Z" fill="hsl(200,72%,9%)" />
+        </svg>
       </div>
 
       {/* Content - scrolls under the fixed header */}
