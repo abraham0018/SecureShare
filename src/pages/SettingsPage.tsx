@@ -38,9 +38,13 @@ const SettingsPage = () => {
         },
         {
           icon: Lock,
-          title: 'Encryption Info',
-          desc: 'XOR-based encryption with password',
-          onClick: () => toast.info('XOR encryption uses your password as a key to encrypt/decrypt files symmetrically.'),
+          title: 'Lock App',
+          desc: 'Lock the app immediately',
+          onClick: () => {
+            localStorage.removeItem('secureshare-unlocked');
+            window.location.href = '/pin';
+            toast.success('App locked');
+          },
         },
       ],
     },
