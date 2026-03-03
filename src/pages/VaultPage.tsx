@@ -1,4 +1,5 @@
 import { Shield, Lock, Unlock, Wifi, Download } from 'lucide-react';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useVault } from '@/context/VaultContext';
 import { formatFileSize, formatDate } from '@/lib/encryption';
@@ -102,13 +103,24 @@ const VaultPage = () => {
                   {file.encrypted && <span className="encrypted-badge">Encrypted</span>}
                 </div>
                 <button
-                  onClick={() => {
-                    if (navigator.share) {
-                      const blob = new Blob([file.data.buffer as ArrayBuffer]);
-                      const shareFile = new File([blob], file.name, { type: 'application/octet-stream' });
-                      navigator.share({ files: [shareFile] }).catch(() => {});
+                  onClick={async () => {
+                    const blob = new Blob([file.data.buffer as ArrayBuffer]);
+                    const shareFile = new File([blob], file.name, { type: 'application/octet-stream' });
+                    if (navigator.canShare && navigator.canShare({ files: [shareFile] })) {
+                      try {
+                        await navigator.share({ files: [shareFile], title: file.name });
+                      } catch {
+                        // User cancelled
+                      }
+                    } else if (navigator.share) {
+                      const url = URL.createObjectURL(blob);
+                      try {
+                        await navigator.share({ title: file.name, text: `Sharing ${file.name}`, url });
+                      } catch {}
+                      URL.revokeObjectURL(url);
                     } else {
                       handleDownload(file);
+                      toast.info('Share not supported — file downloaded instead');
                     }
                   }}
                   className="p-2 text-teal hover:bg-muted rounded-lg transition-colors"
