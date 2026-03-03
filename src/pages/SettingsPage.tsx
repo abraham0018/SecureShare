@@ -98,11 +98,11 @@ const SettingsPage = () => {
           <h1 className="text-xl font-bold text-primary-foreground">Settings</h1>
         </div>
         <svg viewBox="0 0 1440 120" className="w-full block -mt-px" preserveAspectRatio="none" style={{ height: '30px' }}>
-          <path d="M0,0 L0,80 Q0,120 40,120 L1400,120 Q1440,120 1440,80 L1440,0 Z" fill="hsl(200,72%,9%)" />
+          <path d="M0,120 L0,0 Q0,120 360,120 L1080,120 Q1440,120 1440,0 L1440,120 Z" fill="hsl(200,72%,9%)" />
         </svg>
       </div>
 
-      <div className="flex-1 px-5 space-y-5" style={{ marginTop: '110px' }}>
+      <div className="flex-1 px-5 space-y-5" style={{ marginTop: '100px' }}>
         {sections.map(section => (
           <div key={section.label}>
             <p className="section-label mb-2">{section.label}</p>
