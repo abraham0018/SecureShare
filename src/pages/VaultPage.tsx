@@ -102,10 +102,24 @@ const VaultPage = () => {
                   {file.encrypted && <span className="encrypted-badge">Encrypted</span>}
                 </div>
                 <button
-                  onClick={() => handleDownload(file)}
+                  onClick={() => {
+                    if (navigator.share) {
+                      const blob = new Blob([file.data.buffer as ArrayBuffer]);
+                      const shareFile = new File([blob], file.name, { type: 'application/octet-stream' });
+                      navigator.share({ files: [shareFile] }).catch(() => {});
+                    } else {
+                      handleDownload(file);
+                    }
+                  }}
                   className="p-2 text-teal hover:bg-muted rounded-lg transition-colors"
                 >
                   <Share2 size={18} />
+                </button>
+                <button
+                  onClick={() => handleDownload(file)}
+                  className="p-2 text-teal hover:bg-muted rounded-lg transition-colors"
+                >
+                  <Download size={18} />
                 </button>
                 <button
                   onClick={() => removeFile(file.id)}
