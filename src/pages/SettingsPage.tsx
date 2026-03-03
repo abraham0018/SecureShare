@@ -97,12 +97,9 @@ const SettingsPage = () => {
           </div>
           <h1 className="text-xl font-bold text-primary-foreground">Settings</h1>
         </div>
-        <svg viewBox="0 0 200 30" className="w-full block -mt-px" preserveAspectRatio="none" style={{ height: '30px' }}>
-          <path d="M0,0 L0,0 Q0,30 30,30 L170,30 Q200,30 200,0 Z" fill="hsl(200,72%,9%)" />
-        </svg>
       </div>
 
-      <div className="flex-1 px-5 space-y-5" style={{ marginTop: '90px' }}>
+      <div className="flex-1 px-5 space-y-5" style={{ marginTop: '70px' }}>
         {sections.map(section => (
           <div key={section.label}>
             <p className="section-label mb-2">{section.label}</p>
