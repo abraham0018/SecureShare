@@ -55,8 +55,8 @@ const VaultPage = () => {
             </div>
           </div>
         </div>
-        <svg viewBox="0 0 1440 120" className="w-full block -mt-px" preserveAspectRatio="none" style={{ height: '40px' }}>
-          <path d="M0,0 L0,120 Q720,0 1440,120 L1440,0 Z" fill="hsl(200,72%,9%)" />
+        <svg viewBox="0 0 1440 120" className="w-full block -mt-px" preserveAspectRatio="none" style={{ height: '30px' }}>
+          <path d="M0,0 L0,80 Q0,120 40,120 L1400,120 Q1440,120 1440,80 L1440,0 Z" fill="hsl(200,72%,9%)" />
         </svg>
       </div>
 
