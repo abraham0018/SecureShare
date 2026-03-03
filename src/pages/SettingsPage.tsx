@@ -102,7 +102,7 @@ const SettingsPage = () => {
         </svg>
       </div>
 
-      <div className="flex-1 px-5 space-y-5" style={{ marginTop: '100px' }}>
+      <div className="flex-1 px-5 space-y-5" style={{ marginTop: '90px' }}>
         {sections.map(section => (
           <div key={section.label}>
             <p className="section-label mb-2">{section.label}</p>
