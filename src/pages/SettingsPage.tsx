@@ -97,8 +97,8 @@ const SettingsPage = () => {
           </div>
           <h1 className="text-xl font-bold text-primary-foreground">Settings</h1>
         </div>
-        <svg viewBox="0 0 1440 120" className="w-full block -mt-px" preserveAspectRatio="none" style={{ height: '30px' }}>
-          <path d="M0,120 L0,0 Q0,120 360,120 L1080,120 Q1440,120 1440,0 L1440,120 Z" fill="hsl(200,72%,9%)" />
+        <svg viewBox="0 0 200 30" className="w-full block -mt-px" preserveAspectRatio="none" style={{ height: '30px' }}>
+          <path d="M0,0 L0,0 Q0,30 30,30 L170,30 Q200,30 200,0 Z" fill="hsl(200,72%,9%)" />
         </svg>
       </div>
 
