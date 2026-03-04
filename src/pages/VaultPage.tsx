@@ -5,6 +5,9 @@ import { useVault } from '@/context/VaultContext';
 import { formatFileSize, formatDate } from '@/lib/encryption';
 import BottomNav from '@/components/BottomNav';
 import { Share2, Trash2 } from 'lucide-react';
+import { Share } from '@capacitor/share';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Capacitor } from '@capacitor/core';
 
 const VaultPage = () => {
   const navigate = useNavigate();
@@ -105,22 +108,27 @@ const VaultPage = () => {
                 <button
                   onClick={async () => {
                     const blob = new Blob([file.data.buffer as ArrayBuffer]);
-                    const shareFile = new File([blob], file.name, { type: 'application/octet-stream' });
-                    if (navigator.canShare && navigator.canShare({ files: [shareFile] })) {
+                    if (Capacitor.isNativePlatform()) {
                       try {
-                        await navigator.share({ files: [shareFile], title: file.name });
+                        // Write file to cache directory
+                        const base64 = btoa(
+                          Array.from(file.data).map(b => String.fromCharCode(b)).join('')
+                        );
+                        const result = await Filesystem.writeFile({
+                          path: file.name,
+                          data: base64,
+                          directory: Directory.Cache,
+                        });
+                        await Share.share({
+                          title: file.name,
+                          url: result.uri,
+                        });
                       } catch {
-                        // User cancelled
+                        // User cancelled or error
                       }
-                    } else if (navigator.share) {
-                      const url = URL.createObjectURL(blob);
-                      try {
-                        await navigator.share({ title: file.name, text: `Sharing ${file.name}`, url });
-                      } catch {}
-                      URL.revokeObjectURL(url);
                     } else {
                       handleDownload(file);
-                      toast.info('Share not supported — file downloaded instead');
+                      toast.info('File downloaded');
                     }
                   }}
                   className="p-2 text-teal hover:bg-muted rounded-lg transition-colors"
