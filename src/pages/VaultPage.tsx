@@ -23,14 +23,44 @@ const VaultPage = () => {
     { icon: Download, label: 'Receive', desc: 'Get files', path: '/receive', iconBg: '' },
   ];
 
-  const handleDownload = (file: typeof files[0]) => {
-    const blob = new Blob([file.data.buffer as ArrayBuffer]);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = file.name;
-    a.click();
-    URL.revokeObjectURL(url);
+  const handleDownload = async (file: typeof files[0]) => {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const base64 = btoa(
+          Array.from(file.data).map(b => String.fromCharCode(b)).join('')
+        );
+        await Filesystem.writeFile({
+          path: 'Download/' + file.name,
+          data: base64,
+          directory: Directory.ExternalStorage,
+          recursive: true,
+        });
+        toast.success(`Saved to Downloads/${file.name}`);
+      } catch (err) {
+        // Fallback to Documents if ExternalStorage fails
+        try {
+          const base64 = btoa(
+            Array.from(file.data).map(b => String.fromCharCode(b)).join('')
+          );
+          await Filesystem.writeFile({
+            path: file.name,
+            data: base64,
+            directory: Directory.Documents,
+          });
+          toast.success(`Saved to Documents/${file.name}`);
+        } catch {
+          toast.error('Could not save file to device');
+        }
+      }
+    } else {
+      const blob = new Blob([file.data.buffer as ArrayBuffer]);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.name;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
   };
 
   return (
