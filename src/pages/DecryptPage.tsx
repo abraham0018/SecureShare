@@ -1,15 +1,21 @@
 import { useState, useRef } from 'react';
-import { Unlock, FileText, Eye, EyeOff } from 'lucide-react';
+import { Unlock, FileText, Eye, EyeOff, Download, Save } from 'lucide-react';
 import { xorDecrypt } from '@/lib/encryption';
 import PageHeader from '@/components/PageHeader';
 import { toast } from 'sonner';
+import { useVault } from '@/context/VaultContext';
+import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory } from '@capacitor/filesystem';
 
 const DecryptPage = () => {
   const [file, setFile] = useState<File | null>(null);
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [decryptedData, setDecryptedData] = useState<Uint8Array | null>(null);
+  const [decryptedName, setDecryptedName] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
+  const { addFile } = useVault();
 
   const handleDecrypt = async () => {
     if (!file) return toast.error('Please select an encrypted file');
@@ -20,22 +26,75 @@ const DecryptPage = () => {
       const buffer = await file.arrayBuffer();
       const data = new Uint8Array(buffer);
       const decrypted = xorDecrypt(data, password);
-
       const originalName = file.name.replace('.encrypted', '');
-      const blob = new Blob([decrypted.buffer as ArrayBuffer]);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = originalName;
-      a.click();
-      URL.revokeObjectURL(url);
 
-      toast.success('File decrypted and downloaded!');
+      setDecryptedData(decrypted);
+      setDecryptedName(originalName);
+      toast.success('File decrypted! Choose where to save it.');
     } catch {
       toast.error('Decryption failed');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSaveToDevice = async () => {
+    if (!decryptedData || !decryptedName) return;
+
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const base64 = btoa(
+          Array.from(decryptedData).map(b => String.fromCharCode(b)).join('')
+        );
+        await Filesystem.writeFile({
+          path: 'Download/' + decryptedName,
+          data: base64,
+          directory: Directory.ExternalStorage,
+          recursive: true,
+        });
+        toast.success(`Saved to Downloads/${decryptedName}`);
+      } catch {
+        try {
+          const base64 = btoa(
+            Array.from(decryptedData).map(b => String.fromCharCode(b)).join('')
+          );
+          await Filesystem.writeFile({
+            path: decryptedName,
+            data: base64,
+            directory: Directory.Documents,
+          });
+          toast.success(`Saved to Documents/${decryptedName}`);
+        } catch {
+          toast.error('Could not save file to device');
+        }
+      }
+    } else {
+      const blob = new Blob([decryptedData.buffer as ArrayBuffer]);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = decryptedName;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('File downloaded!');
+    }
+  };
+
+  const handleSaveToVault = () => {
+    if (!decryptedData || !decryptedName) return;
+    addFile({
+      id: crypto.randomUUID(),
+      name: decryptedName,
+      size: decryptedData.length,
+      date: new Date(),
+      encrypted: false,
+      data: decryptedData,
+    });
+    toast.success('Saved to vault!');
+    setDecryptedData(null);
+    setDecryptedName('');
+    setFile(null);
+    setPassword('');
   };
 
   return (
@@ -92,14 +151,34 @@ const DecryptPage = () => {
             </div>
           </div>
 
-          <button
-            onClick={handleDecrypt}
-            disabled={loading}
-            className="w-full py-3.5 rounded-xl font-semibold text-sm bg-accent text-accent-foreground transition-all hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            <Unlock size={16} />
-            {loading ? 'Decrypting...' : 'Decrypt File'}
-          </button>
+          {!decryptedData ? (
+            <button
+              onClick={handleDecrypt}
+              disabled={loading}
+              className="w-full py-3.5 rounded-xl font-semibold text-sm bg-accent text-accent-foreground transition-all hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              <Unlock size={16} />
+              {loading ? 'Decrypting...' : 'Decrypt File'}
+            </button>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-sm text-center text-teal font-medium">✓ Decrypted: {decryptedName}</p>
+              <button
+                onClick={handleSaveToDevice}
+                className="w-full py-3.5 rounded-xl font-semibold text-sm bg-accent text-accent-foreground transition-all hover:opacity-90 flex items-center justify-center gap-2"
+              >
+                <Download size={16} />
+                Save to Phone Storage
+              </button>
+              <button
+                onClick={handleSaveToVault}
+                className="w-full py-3.5 rounded-xl font-semibold text-sm border-2 border-border bg-card transition-all hover:opacity-90 flex items-center justify-center gap-2"
+              >
+                <Save size={16} className="text-teal" />
+                Save to Vault
+              </button>
+            </div>
+          )}
 
           <p className="text-xs text-center flex items-center justify-center gap-1.5">
             <span>🔑</span>

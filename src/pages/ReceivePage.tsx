@@ -3,20 +3,46 @@ import { Download, FileText, Radio } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import InputOTP from '@/components/InputOTPCustom';
 import { toast } from 'sonner';
+import { useVault } from '@/context/VaultContext';
+import { useNavigate } from 'react-router-dom';
 
 const ReceivePage = () => {
   const [code, setCode] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
+  const { addFile } = useVault();
+  const navigate = useNavigate();
 
   const handleConnect = () => {
     if (code.length < 6) return toast.error('Enter the full 6-digit share code');
     toast.info('Looking for devices on the network...');
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      toast.success(`File "${file.name}" imported`);
+    if (!file) return;
+
+    try {
+      const buffer = await file.arrayBuffer();
+      const data = new Uint8Array(buffer);
+
+      addFile({
+        id: crypto.randomUUID(),
+        name: file.name,
+        size: file.size,
+        date: new Date(),
+        encrypted: file.name.endsWith('.encrypted'),
+        data,
+        originalName: file.name.replace('.encrypted', ''),
+      });
+
+      toast.success(`"${file.name}" added to vault!`, {
+        action: {
+          label: 'View Vault',
+          onClick: () => navigate('/'),
+        },
+      });
+    } catch {
+      toast.error('Failed to import file');
     }
   };
 
