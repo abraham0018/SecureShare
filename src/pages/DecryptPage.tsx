@@ -31,9 +31,9 @@ const DecryptPage = () => {
       setDecryptedData(decrypted);
       setDecryptedName(originalName);
       toast.success('File decrypted! Choose where to save it.');
-    } catch {
-      toast.error('Decryption failed');
-    } finally {
+    } catch (err: any) {
+      const msg = err?.message === 'Incorrect password' ? 'Incorrect password' : 'Decryption failed';
+      toast.error(msg);
       setLoading(false);
     }
   };
