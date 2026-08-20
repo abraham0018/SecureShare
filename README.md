@@ -1,73 +1,47 @@
-# Welcome to your Lovable project
+SecureShare
 
-## Project info
+A secure, peer-to-peer file-sharing application that transfers files directly between devices over a local network — no cloud, no internet dependency, no middleman server. Originally built as a web app and converted into a native Android app using Capacitor, with a custom Wi-Fi discovery and transfer layer underneath.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Overview
 
-## How can I edit this code?
+SecureShare lets you send files directly between devices on the same network. Instead of routing through a third-party server, it discovers nearby devices over Wi-Fi and transfers files peer-to-peer, with encryption and a secure vault protecting files at rest.
 
-There are several ways of editing your application.
+The project started as a React web app, then was wrapped into a native Android application using Capacitor, with a custom Java plugin bridging the web layer to native Android networking APIs for device discovery and transfer.
 
-**Use Lovable**
+Features
+Wi-Fi peer discovery — devices on the same local network find each other automatically via local network service discovery (mDNS)
+Direct device-to-device transfer — files move over a local HTTP server, not through the cloud
+Cross-platform exchange — send files between a PC browser and an Android phone via a lightweight web UI, PIN pairing, and a /files endpoint
+Encryption & secure vault — files are encrypted/decrypted and stored in a protected vault on-device
+Native Android app — packaged from the web app using Capacitor, with a custom Java plugin for mDNS discovery and HTTP-based transfer
+Tech Stack
+Frontend: React, TypeScript, Vite
+Native wrapper: Capacitor (Android)
+Native layer: Custom Java plugin (mDNS discovery, local HTTP server for transfers)
+Security: File encryption/decryption, secure vault storage
+Networking: Local network (Wi-Fi) peer discovery and transfer
+How It Works
+The app starts a local HTTP server and advertises itself on the network via mDNS.
+Nearby devices running SecureShare (or a browser, for PC-to-phone transfers) discover each other automatically.
+A PIN is displayed to pair devices for a transfer session.
+Files are encrypted, sent directly over the local network via HTTP, and decrypted into the receiving device's secure vault.
+No file ever leaves the local network or touches a third-party server.
+Cross-Platform Use (PC ↔ Phone)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+In addition to phone-to-phone transfers, SecureShare supports sending files between a PC browser and an Android device:
 
-Changes made via Lovable will be committed automatically to this repo.
+The Android app exposes a /files endpoint and a simple web UI
+A PIN is shown on-device to authorize the connection
+Files can be pushed or pulled between the two without installing anything on the PC
+Project Status
 
-**Use your preferred IDE**
+This was built as a personal final-year project, iterating from an initial WiFi P2P Android prototype into a more complete cross-platform version with vault management and improved file-transfer reliability (including fixes to file-receipt event handling, vault display, and URL encoding).
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Possible Extensions
+Multi-file / folder transfer with progress tracking
+QR-code based pairing as an alternative to PIN entry
+iOS support via Capacitor
+Transfer history and file integrity verification (checksums)
+Disclaimer
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+This app is intended for transferring files on trusted local networks. Always verify device pairing (PIN) before accepting incoming transfers.
