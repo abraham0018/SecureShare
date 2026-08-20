@@ -2,7 +2,7 @@ SecureShare
 
 A secure, peer-to-peer file-sharing application that transfers files directly between devices over a local network — no cloud, no internet dependency, no middleman server. Originally built as a web app and converted into a native Android app using Capacitor, with a custom Wi-Fi discovery and transfer layer underneath.
 
-Download APK (https://github.com/abraham0018/SecureShare/releases/download/v1.0.0/SecureShare.apk)
+Download APK https://github.com/abraham0018/SecureShare/releases/tag/v1.0.0
 
 Overview
 
